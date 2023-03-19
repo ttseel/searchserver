@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="5 seconds">
+    <property name="ROOT_LOG_PATH" value="./server_log"/>
+    <property name="DEV_LOG_PATH" value="${ROOT_LOG_PATH}/dev"/>
+    <property name="PROD_LOG_PATH" value="${ROOT_LOG_PATH}/prod"/>
+    <property name="ALL_LOG_PATH" value="set_in_springProfile"/>
+    <property name="ERROR_LOG_PATH" value="set_in_springProfile"/>
+    <property name="WARN_LOG_PATH" value="set_in_springProfile"/>
+    <property name="INFO_LOG_PATH" value="set_in_springProfile"/>
+    <property name="DEBUG_LOG_PATH" value="set_in_springProfile"/>
+    <property name="TRACE_LOG_PATH" value="set_in_springProfile"/>
+    <property name="MAX_FILE_SIZE" value="100MB"/>
+    <property name="MAX_HISTORY" value="30"/>
+    <property name="FILE_APPENDER_ALL_NAME" value="FILE_APPENDER_ALL"/>
+    <property name="FILE_APPENDER_ERROR_NAME" value="FILE_APPENDER_ERROR"/>
+    <property name="FILE_APPENDER_WARN_NAME" value="FILE_APPENDER_WARN"/>
+    <property name="FILE_APPENDER_INFO_NAME" value="FILE_APPENDER_INFO"/>
+    <property name="FILE_APPENDER_DEBUG_NAME" value="FILE_APPENDER_DEBUG"/>
+    <property name="FILE_APPENDER_TRACE_NAME" value="FILE_APPENDER_TRACE"/>
+
+    <property name="FILE_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] [%thread] [%-5level] [%logger{36}:%L] - %msg%n"/>
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %green([%thread]) %highlight([%-5level]) %boldWhite([%logger{36}:%yellow(%L)]) - %msg%n"/>
+
+    <!-- springProfile에 따른 Log file path 설정 -->
+    <springProfile name="dev">
+        <property name="ALL_LOG_PATH" value="${DEV_LOG_PATH}/all"/>
+        <property name="ERROR_LOG_PATH" value="${DEV_LOG_PATH}/error"/>
+        <property name="WARN_LOG_PATH" value="${DEV_LOG_PATH}/warn"/>
+        <property name="INFO_LOG_PATH" value="${DEV_LOG_PATH}/info"/>
+        <property name="DEBUG_LOG_PATH" value="${DEV_LOG_PATH}/debug"/>
+        <property name="TRACE_LOG_PATH" value="${DEV_LOG_PATH}/trace"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <property name="ALL_LOG_PATH" value="${PROD_LOG_PATH}/error"/>
+        <property name="ERROR_LOG_PATH" value="${PROD_LOG_PATH}/error"/>
+        <property name="WARN_LOG_PATH" value="${PROD_LOG_PATH}/warn"/>
+        <property name="INFO_LOG_PATH" value="${PROD_LOG_PATH}/info"/>
+        <property name="DEBUG_LOG_PATH" value="${PROD_LOG_PATH}/debug"/>
+        <property name="TRACE_LOG_PATH" value="${PROD_LOG_PATH}/trace"/>
+    </springProfile>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ALL_LOG_PATH}/all.log</file>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ALL_LOG_PATH}/error.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ERROR_LOG_PATH}/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ERROR_LOG_PATH}/error.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${WARN_LOG_PATH}/warn.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${WARN_LOG_PATH}/warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${INFO_LOG_PATH}/info.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${INFO_LOG_PATH}/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DEBUG_LOG_PATH}/debug.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${DEBUG_LOG_PATH}/debug.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_APPENDER_TRACE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${TRACE_LOG_PATH}/trace.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy name="rollingFileNamePattern"
+                       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${TRACE_LOG_PATH}/trace.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+            <!--            <appender-ref ref="${FILE_APPENDER_ALL_NAME}"/>-->
+            <!--            <appender-ref ref="${FILE_APPENDER_ERROR_NAME}"/>-->
+            <!--            <appender-ref ref="${FILE_APPENDER_WARN_NAME}"/>-->
+            <!--            <appender-ref ref="${FILE_APPENDER_INFO_NAME}"/>-->
+            <!--            <appender-ref ref="${FILE_APPENDER_DEBUG_NAME}"/>-->
+            <!--            <appender-ref ref="${FILE_APPENDER_TRACE_NAME}"/>-->
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="${FILE_APPENDER_ALL_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_ERROR_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_WARN_NAME}"/>
+        </root>
+    </springProfile>
+</configuration>
