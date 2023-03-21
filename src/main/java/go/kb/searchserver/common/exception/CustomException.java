@@ -10,6 +10,4 @@ import java.time.LocalDateTime;
 public class CustomException extends RuntimeException {
     private final LocalDateTime dateTime = LocalDateTime.now();
     private ErrorCode errorCode;
-
-//    private String logMessage;
 }

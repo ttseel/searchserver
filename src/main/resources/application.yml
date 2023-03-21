@@ -3,8 +3,8 @@ spring:
     active: dev
 
   datasource:
-    url: jdbc:h2:mem:testdb # in-memory 주소 설정
-    #    url: jdbc:h2:tcp://localhost/~/datajpa
+    #    url: jdbc:h2:mem:testdb # in-memory 주소 설정
+    url: jdbc:h2:tcp://localhost/~/searchserver
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -20,14 +20,16 @@ spring:
 client:
   kakao:
     host: https://dapi.kakao.com
-    #      search-uri: /v2/search/blog.json
     rest-api-key: KakaoAK 2b6db73c7d647badd87ba0960b2e50c1
 
   naver:
     host: https://openapi.naver.com
-    #    search-uri: /v1/search/blog.json
     client-id: eQTz5HAWuOEQEfUE5pGd
     client-secret: l0QnaYIjHx
+
+schedule:
+  top10:
+    period: 60000 # millisec
 
 #  data:
 #    web:

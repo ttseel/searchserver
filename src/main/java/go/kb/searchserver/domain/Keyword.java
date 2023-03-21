@@ -1,22 +1,23 @@
 package go.kb.searchserver.domain;
 
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @ToString(of = {"id", "keyword", "readCount"})
-@Table(name = "keyword", indexes = @Index(name = "idx_count", columnList = "read_count DESC"))
+@Table(name = "keyword", indexes = {@Index(name = "idx_count", columnList = "read_count DESC")})
 public class Keyword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "keyword", unique = true)
     private String keyword;
 
     @Column(name = "read_count")
@@ -27,7 +28,7 @@ public class Keyword {
         this.readCount = readCount;
     }
 
-    public void increment() {
-        readCount++;
+    public void increment(int plus) {
+        readCount += plus;
     }
 }

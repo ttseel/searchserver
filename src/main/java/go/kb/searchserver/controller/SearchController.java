@@ -5,7 +5,6 @@ import go.kb.searchserver.dto.SearchResponse;
 import go.kb.searchserver.dto.Top10Response;
 import go.kb.searchserver.repository.KeywordRepository;
 import go.kb.searchserver.service.SearchService;
-import go.kb.searchserver.service.TempService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,20 +24,15 @@ public class SearchController {
     @Qualifier("SearchServiceV1")
     @Autowired
     private SearchService searchService;
-    @Autowired
-    private TempService tempService;
 
     @GetMapping("/blog-posting")
     private SearchResponse searchBlogPosting(@RequestParam("keyword") String keyword,
                                              @RequestParam(required = false, defaultValue = "accuracy") String sort,
-                                             @RequestParam(required = false, defaultValue = "1") int page,
-                                             @RequestParam(required = false, defaultValue = "10") int size) {
-
+                                             @RequestParam(required = false, defaultValue = "1") String page,
+                                             @RequestParam(required = false, defaultValue = "10") String size) {
         SearchResponse searchResponse = searchService.searchBlog(keyword, sort, page, size);
-        tempService.saveAndIncrement(keyword);
         return searchResponse;
     }
-
 
     @GetMapping("/top10")
     private Top10Response searchTop10() {
@@ -52,9 +46,11 @@ public class SearchController {
     // TODO 테스트. 삭제해야함
     @PostConstruct
     private void createSampleData() {
+        int keywordCount = 1;
         Random random = new Random();
-        for (int i = 0; i < 10000; i++) {
-            Keyword keyword = new Keyword("keyword" + i, random.nextInt(Integer.MAX_VALUE));
+        for (int i = 0; i < keywordCount; i++) {
+//            Keyword keyword = new Keyword("keyword" + i, random.nextInt(Integer.MAX_VALUE));
+            Keyword keyword = new Keyword("keyword" + i, random.nextInt(20));
             keywordRepository.save(keyword);
         }
     }

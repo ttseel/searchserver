@@ -16,8 +16,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest
 class NaverSearchHandlerTest {
     @Value("${client.naver.host}")
@@ -26,6 +24,8 @@ class NaverSearchHandlerTest {
     private String clientId;
     @Value("${client.naver.client-secret}")
     private String clientSecret;
+    @Autowired
+    SearchService searchService;
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -51,22 +51,7 @@ class NaverSearchHandlerTest {
     }
 
     @Autowired
-    TempService tempService;
-    @Autowired
     KeywordRepository keywordRepository;
-
-    @Test
-    public void testSaveAndIncrement() {
-        Random random = new Random();
-
-        int incrementCount = 100;
-        String keyword = "testKeyword";
-        for (int i = 0; i < incrementCount; i++) {
-            tempService.saveAndIncrement(keyword);
-        }
-
-        assertThat(keywordRepository.findByKeyword(keyword).get().getReadCount()).isEqualTo(incrementCount);
-    }
 
     @Test
     public void testTop10Query() {
