@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import java.util.Random;
 
 @Slf4j
@@ -44,7 +43,7 @@ public class SearchController {
     KeywordRepository keywordRepository; // TODO 테스트. 삭제해야함
 
     // TODO 테스트. 삭제해야함
-    @PostConstruct
+//    @PostConstruct
     private void createSampleData() {
         int keywordCount = 1;
         Random random = new Random();

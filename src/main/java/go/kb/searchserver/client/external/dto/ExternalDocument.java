@@ -1,4 +1,4 @@
-package go.kb.searchserver.dto;
+package go.kb.searchserver.client.external.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

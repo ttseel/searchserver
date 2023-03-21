@@ -1,5 +1,6 @@
-package go.kb.searchserver.service;
+package go.kb.searchserver.service.schedule;
 
+import go.kb.searchserver.service.BatchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

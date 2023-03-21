@@ -1,4 +1,4 @@
-package go.kb.searchserver.dto;
+package go.kb.searchserver.client.external.dto;
 
 
 import java.util.List;

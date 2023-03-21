@@ -1,4 +1,4 @@
-package go.kb.searchserver.dto;
+package go.kb.searchserver.client.external.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

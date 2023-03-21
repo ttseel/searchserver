@@ -32,7 +32,7 @@ public class BatchService {
         copiedCacheMap.forEach((keyword, cacheCount) -> {
             Optional<Keyword> keywordEntity = keywordRepository.findByKeyword(keyword);
             if (keywordEntity.isEmpty()) {
-                newKeywordList.add(new Keyword(keyword, 1));
+                newKeywordList.add(new Keyword(keyword, cacheCount));
             } else {
                 keywordEntity.get().increment(cacheCount); // TODO 네이티브 쿼리 in 쿼리로 최적화 가능. in 쿼리 설정조건 블로그에서 찾아 넣기
             }
@@ -63,6 +63,7 @@ public class BatchService {
         return copied;
     }
 
+    // TODO insert 쿼리만 따로 하면 더 빠를까?
     @Transactional
     private void insertNewKeywords(List<Keyword> newKeywordList) {
         keywordRepository.saveAll(newKeywordList);

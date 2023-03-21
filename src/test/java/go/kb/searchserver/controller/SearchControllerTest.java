@@ -1,6 +1,6 @@
 package go.kb.searchserver.controller;
 
-import go.kb.searchserver.dto.NaverSearchResponse;
+import go.kb.searchserver.client.external.dto.NaverSearchResponse;
 import go.kb.searchserver.repository.KeywordRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

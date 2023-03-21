@@ -1,7 +1,7 @@
 package go.kb.searchserver.service;
 
 import go.kb.searchserver.domain.Keyword;
-import go.kb.searchserver.dto.NaverSearchResponse;
+import go.kb.searchserver.client.external.dto.NaverSearchResponse;
 import go.kb.searchserver.repository.KeywordRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

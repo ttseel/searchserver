@@ -1,4 +1,4 @@
-package go.kb.searchserver.common.exception;
+package go.kb.searchserver.common.error;
 
 import org.springframework.http.HttpStatus;
 

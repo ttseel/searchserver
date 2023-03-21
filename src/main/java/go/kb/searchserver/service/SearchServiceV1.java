@@ -1,6 +1,7 @@
 package go.kb.searchserver.service;
 
-import go.kb.searchserver.common.exception.CustomException;
+import go.kb.searchserver.client.external.ExternalSearchHandler;
+import go.kb.searchserver.common.error.exception.ServiceException;
 import go.kb.searchserver.dto.KeywordRank;
 import go.kb.searchserver.dto.SearchResponse;
 import go.kb.searchserver.dto.Top10Response;
@@ -18,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static go.kb.searchserver.common.exception.SearchErrorCode.*;
+import static go.kb.searchserver.common.error.CommonErrorCode.UNEXPECTED_SYSTEM_ERROR;
+import static go.kb.searchserver.common.error.SearchErrorCode.*;
 
 @Slf4j
 @Qualifier("SearchServiceV1")
@@ -48,13 +50,13 @@ public class SearchServiceV1 implements SearchService {
 
     private void requestValidation(String keyword, String sort, String page, String size) {
         if (isInvalidKeyword(keyword)) {
-            throw new CustomException(INVALID_SEARCH_PARAM_KEYWORD);
+            throw new ServiceException(INVALID_SEARCH_PARAM_KEYWORD);
         } else if (isInvalidSort(sort)) {
-            throw new CustomException(INVALID_SEARCH_PARAM_SORT);
-        } else if (isInteger(page) && isValidRange(Integer.parseInt(page), 1, 50)) {
-            throw new CustomException(INVALID_SEARCH_PARAM_PAGE);
-        } else if (isInteger(page) && isValidRange(Integer.parseInt(size), 1, 50)) {
-            throw new CustomException(INVALID_SEARCH_PARAM_SIZE);
+            throw new ServiceException(INVALID_SEARCH_PARAM_SORT);
+        } else if (!isInteger(page) || isInvalidRange(Integer.parseInt(page), 1, 50)) {
+            throw new ServiceException(INVALID_SEARCH_PARAM_PAGE);
+        } else if (!isInteger(size) || isInvalidRange(Integer.parseInt(size), 1, 50)) {
+            throw new ServiceException(INVALID_SEARCH_PARAM_SIZE);
         }
     }
 
@@ -75,7 +77,7 @@ public class SearchServiceV1 implements SearchService {
         }
     }
 
-    private boolean isValidRange(int page, int min, int max) {
+    private boolean isInvalidRange(int page, int min, int max) {
         return page < min || page > max;
     }
 
@@ -96,10 +98,10 @@ public class SearchServiceV1 implements SearchService {
     @Override
     public void putUpdatedTop10(LocalDateTime updateTime, List<KeywordRank> newTop10) {
         if (newTop10.size() == 0) {
-            log.error("There's a problem with the Top10 update. Size of New : 0");
-            // TODO throw 비즈니스 로직 Exception
-            throw new IllegalStateException();
+            log.error("[Error Code : {}] [Error Message : {}]", UNEXPECTED_SYSTEM_ERROR.getCode(), UNEXPECTED_SYSTEM_ERROR.getMessage());
+            return;
         }
+
         top10UpdateTime = updateTime;
         top10.addAll(newTop10);
 
