@@ -10,7 +10,7 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum SearchErrorCode implements ErrorCode {
     /* 4XX */
-    INVALID_SEARCH_PARAM_KEYWORD(BAD_REQUEST, "SE101", "잘못된 쿼리 요청입니다"),
+    INVALID_SEARCH_PARAM_QUERY(BAD_REQUEST, "SE101", "잘못된 query 요청입니다"),
     INVALID_SEARCH_PARAM_SORT(BAD_REQUEST, "SE102", "부적절한 sort 값 입니다"),
     INVALID_SEARCH_PARAM_PAGE(BAD_REQUEST, "SE103", "부적절한 page 값 입니다"),
     INVALID_SEARCH_PARAM_SIZE(BAD_REQUEST, "SE104", "부적절한 size 값 입니다"),

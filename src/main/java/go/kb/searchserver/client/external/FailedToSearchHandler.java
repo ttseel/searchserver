@@ -13,7 +13,7 @@ import static go.kb.searchserver.common.error.SearchErrorCode.SEARCH_REQUEST_FAI
 @Component
 public class FailedToSearchHandler extends ExternalSearchHandler {
     @Override
-    public SearchResponse searchBlog(String keyword, String sort, Integer page, Integer size) {
+    public SearchResponse searchBlog(String query, String sort, Integer page, Integer size) {
         throw new ServiceException(SEARCH_REQUEST_FAILED);
     }
 

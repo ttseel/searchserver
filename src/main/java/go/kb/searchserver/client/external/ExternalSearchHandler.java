@@ -8,7 +8,7 @@ public abstract class ExternalSearchHandler {
 
     protected ExternalSearchHandler nextHandler;
 
-    public abstract SearchResponse searchBlog(String keyword, String sort, Integer page, Integer size);
+    public abstract SearchResponse searchBlog(String query, String sort, Integer page, Integer size);
 
     protected abstract void setNextHandler(ExternalSearchHandler externalSearchHandler);
 

@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.Map;
 
-import static go.kb.searchserver.client.external.naver.Constants.NAVER_CLIENT_ID;
-import static go.kb.searchserver.client.external.naver.Constants.NAVER_CLIENT_SECRET;
+import static go.kb.searchserver.client.external.naver.Constants.*;
 
 @Slf4j
 @Qualifier("NaverSearchHandler")
@@ -35,13 +34,15 @@ public class NaverSearchHandler extends ExternalSearchHandler {
     private RestTemplateClient restTemplateClient;
 
     @Override
-    public SearchResponse searchBlog(String keyword, String sort, Integer page, Integer size) {
+    public SearchResponse searchBlog(String query, String sort, Integer page, Integer size) {
         log.info("Searching for blog posts with the Naver Search handler");
 
+        int naverPage = convertToNaverPage(page, size);
+        int start = toStart(naverPage, size);
         Map<String, String> queryParams = Map.of(
-                "query", keyword,
+                "query", query,
                 "sort", renameSort(sort),
-                "start", String.valueOf(toStart(page, size)),
+                "start", String.valueOf(start),
                 "display", String.valueOf(size)
         );
         URI uri = restTemplateClient.buildUri(host, "/v1/search/blog.json", queryParams);
@@ -54,10 +55,10 @@ public class NaverSearchHandler extends ExternalSearchHandler {
 
         try {
             ResponseEntity<NaverSearchResponse> responseEntity = restTemplateClient.exchange(uri, httpHeaders, NaverSearchResponse.class);
-            return new SearchResponse(responseEntity.getBody(), sort, page, size);
+            return new SearchResponse(responseEntity.getBody(), sort, naverPage, size);
         } catch (Exception e) {
             log.warn("The search using the Naver search handler failed");
-            return nextHandler.searchBlog(keyword, sort, page, size);
+            return nextHandler.searchBlog(query, sort, page, size);
         }
     }
 
@@ -70,7 +71,18 @@ public class NaverSearchHandler extends ExternalSearchHandler {
         return sort.equals("accuracy") ? "sim" : "date";
     }
 
+    private int convertToNaverPage(int page, int size) {
+        if (page * size > NAVER_PARAM_PAGE_MAX) {
+            page = NAVER_PARAM_PAGE_MAX / size;
+        }
+        return page;
+    }
+
     private int toStart(int page, int size) {
+        if (page * size > NAVER_PARAM_PAGE_MAX) {
+            page = NAVER_PARAM_PAGE_MAX / size;
+        }
+        log.info("toStart - [page: {}], [size: {}]", page, size);
         return (page - 1) * size + 1;
     }
 

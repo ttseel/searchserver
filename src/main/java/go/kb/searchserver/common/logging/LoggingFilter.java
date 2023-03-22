@@ -74,6 +74,10 @@ public class LoggingFilter extends OncePerRequestFilter {
             byte[] content = StreamUtils.copyToByteArray(inputStream);
             if (content.length > 0) {
                 String contentString = new String(content);
+                if (contentString.contains("metaInfo")) {
+                    contentString = contentString.substring(contentString.indexOf("metaInfo"), contentString.indexOf("postingList"));
+                }
+
                 log.info("{} : {}", prefix, contentString);
             }
         } else {

@@ -9,7 +9,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Getter
 @AllArgsConstructor
 public enum BusinessErrorCode {
-    TOP10_UPDATE_ERROR(INTERNAL_SERVER_ERROR, "BE101", "시스템에 에러가 발생했습니다");
+    TOP10_UPDATE_ERROR(INTERNAL_SERVER_ERROR, "BE101", "인기검색어 업데이트에 실패했습니다");
 
     private final HttpStatus httpStatus;
     private final String code;

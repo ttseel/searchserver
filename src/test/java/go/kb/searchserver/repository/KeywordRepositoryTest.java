@@ -65,7 +65,7 @@ class KeywordRepositoryTest {
         keywordRepository.save(keyword);
 
         // when
-        Optional<Keyword> result = keywordRepository.findByKeyword("java");
+        Optional<Keyword> result = keywordRepository.findByKeyword("keyword");
 
         // then
         assertThat(result).isPresent().contains(keyword);

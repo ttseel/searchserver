@@ -8,11 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class BatchService {
@@ -27,19 +25,45 @@ public class BatchService {
 
         Map<String, Integer> copiedCacheMap = copyAndClearCache(searchService.getKeywordCacheMap());
 
-        List<Keyword> newKeywordList = new ArrayList<>();
+        List<Keyword> insertKeywordList = new ArrayList<>();
+        Map<Integer, List<String>> updateKeywordList = new HashMap<>();
+        Map<Integer, List<Long>> updateIdList = new HashMap<>();
 
         copiedCacheMap.forEach((keyword, cacheCount) -> {
             Optional<Keyword> keywordEntity = keywordRepository.findByKeyword(keyword);
             if (keywordEntity.isEmpty()) {
-                newKeywordList.add(new Keyword(keyword, cacheCount));
+                insertKeywordList.add(new Keyword(keyword, cacheCount));
             } else {
-                keywordEntity.get().increment(cacheCount); // TODO 네이티브 쿼리 in 쿼리로 최적화 가능. in 쿼리 설정조건 블로그에서 찾아 넣기
+                updateKeywordList.computeIfAbsent(cacheCount, k -> new ArrayList<>()).add(keyword);
+                updateIdList.computeIfAbsent(cacheCount, k -> new ArrayList<>()).add(keywordEntity.get().getId());
             }
         });
-        keywordRepository.saveAll(newKeywordList);
+
+        bulkInsertKeyword(insertKeywordList);
+        bulkUpdateKeywordCount(updateKeywordList);
 
         refreshWithUpdateTop10Keywords(updatedAt);
+    }
+
+    private void bulkInsertKeyword(List<Keyword> insertKeywordList) {
+        keywordRepository.saveAll(insertKeywordList);
+    }
+
+
+    private void bulkUpdateKeywordCount(Map<Integer, List<String>> updateKeywordList) {
+        updateKeywordList.forEach((cacheCount, keywordList) -> {
+            List<List<String>> keywordBatchSet = divideKeywordListByBatchSize(keywordList, 100);
+            keywordBatchSet.forEach(keywordBatch -> keywordRepository.bulkIncrementCount(cacheCount, keywordBatch));
+        });
+    }
+
+    private List<List<String>> divideKeywordListByBatchSize(List<String> keywordList, int batchSize) {
+        return IntStream.range(0, keywordList.size())
+                .boxed()
+                .collect(Collectors.groupingBy(i -> i / batchSize))
+                .values().stream()
+                .map(indices -> indices.stream().map(keywordList::get).collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
     private void refreshWithUpdateTop10Keywords(LocalDateTime updatedAt) {
@@ -55,17 +79,11 @@ public class BatchService {
     }
 
     private Map<String, Integer> copyAndClearCache(Map<String, Integer> cache) {
-        Map<String, Integer> copied = new ConcurrentHashMap<>();
+        Map<String, Integer> copied = new HashMap<>();
         cache.forEach((key, value) -> {
             copied.put(key, value);
             cache.remove(key);
         });
         return copied;
-    }
-
-    // TODO insert 쿼리만 따로 하면 더 빠를까?
-    @Transactional
-    private void insertNewKeywords(List<Keyword> newKeywordList) {
-        keywordRepository.saveAll(newKeywordList);
     }
 }

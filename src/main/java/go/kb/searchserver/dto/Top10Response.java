@@ -1,5 +1,6 @@
 package go.kb.searchserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -7,6 +8,7 @@ import java.util.List;
 
 @Getter
 public class Top10Response {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     LocalDateTime updateTime;
     String updatePeriod;
     List<KeywordRank> top10List;

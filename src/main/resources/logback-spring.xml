@@ -34,7 +34,7 @@
     </springProfile>
 
     <springProfile name="prod">
-        <property name="ALL_LOG_PATH" value="${PROD_LOG_PATH}/error"/>
+        <property name="ALL_LOG_PATH" value="${PROD_LOG_PATH}/all"/>
         <property name="ERROR_LOG_PATH" value="${PROD_LOG_PATH}/error"/>
         <property name="WARN_LOG_PATH" value="${PROD_LOG_PATH}/warn"/>
         <property name="INFO_LOG_PATH" value="${PROD_LOG_PATH}/info"/>
@@ -174,12 +174,12 @@
     <springProfile name="dev">
         <root level="info">
             <appender-ref ref="CONSOLE"/>
-            <!--            <appender-ref ref="${FILE_APPENDER_ALL_NAME}"/>-->
-            <!--            <appender-ref ref="${FILE_APPENDER_ERROR_NAME}"/>-->
-            <!--            <appender-ref ref="${FILE_APPENDER_WARN_NAME}"/>-->
-            <!--            <appender-ref ref="${FILE_APPENDER_INFO_NAME}"/>-->
-            <!--            <appender-ref ref="${FILE_APPENDER_DEBUG_NAME}"/>-->
-            <!--            <appender-ref ref="${FILE_APPENDER_TRACE_NAME}"/>-->
+            <appender-ref ref="${FILE_APPENDER_ALL_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_ERROR_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_WARN_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_INFO_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_DEBUG_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_TRACE_NAME}"/>
         </root>
     </springProfile>
 
@@ -189,6 +189,7 @@
             <appender-ref ref="${FILE_APPENDER_ALL_NAME}"/>
             <appender-ref ref="${FILE_APPENDER_ERROR_NAME}"/>
             <appender-ref ref="${FILE_APPENDER_WARN_NAME}"/>
+            <appender-ref ref="${FILE_APPENDER_INFO_NAME}"/>
         </root>
     </springProfile>
 </configuration>

@@ -1,18 +1,17 @@
 package go.kb.searchserver.service;
 
-import go.kb.searchserver.client.RestTemplateClient;
 import go.kb.searchserver.common.error.exception.ServiceException;
 import go.kb.searchserver.domain.Keyword;
 import go.kb.searchserver.dto.KeywordRank;
 import go.kb.searchserver.dto.Top10Response;
 import go.kb.searchserver.repository.KeywordRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -23,23 +22,24 @@ import static go.kb.searchserver.common.error.SearchErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-// TODO SearchService 내의 로직 테스트는 여기가 맞다
-// TODO SearchController의 파라미터 조건을 테스트할 때(default value가 있다는 가정이 필요한 것)는 SearchControllerTest가 맞다. (통합 테스트가 되어야할 듯)
-
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@Transactional
 class SearchServiceTest {
     @Autowired
     SearchService searchService;
     @Autowired
     KeywordRepository keywordRepository;
-    @MockBean
-    RestTemplateClient mockRestTemplateClient;
 
     private static final String VALID_KEYWORD = "valid keyword";
     private static final String VALID_SORT = "accuracy";
     private static final String VALID_PAGE = "1";
     private static final String VALID_SIZE = "1";
+
+    @BeforeEach
+    void setUp() {
+        keywordRepository.deleteAll();
+    }
 
 
     @DisplayName("query = null 일 때 에러 코드 SE101(INVALID_SEARCH_PARAM_KEYWORD) 반환")
@@ -47,7 +47,7 @@ class SearchServiceTest {
     public void shouldReturnErrorWhenQueryIsNull() {
         assertThatThrownBy(() -> searchService.searchBlog(null, VALID_SORT, VALID_PAGE, VALID_SIZE))
                 .isInstanceOf(ServiceException.class)
-                .extracting("errorCode").isEqualTo(INVALID_SEARCH_PARAM_KEYWORD);
+                .extracting("errorCode").isEqualTo(INVALID_SEARCH_PARAM_QUERY);
     }
 
     @DisplayName("query = ' '(공백) 일 때 에러 코드 SE101(INVALID_SEARCH_PARAM_KEYWORD) 반환")
@@ -55,7 +55,7 @@ class SearchServiceTest {
     public void shouldReturnErrorWhenQueryEqualsWhiteSpace() {
         assertThatThrownBy(() -> searchService.searchBlog(" ", "accuracy", VALID_PAGE, VALID_SIZE))
                 .isInstanceOf(ServiceException.class)
-                .extracting("errorCode").isEqualTo(INVALID_SEARCH_PARAM_KEYWORD);
+                .extracting("errorCode").isEqualTo(INVALID_SEARCH_PARAM_QUERY);
     }
 
     @DisplayName("page가 integer가 아니면, 에러 코드 SE103(INVALID_SEARCH_PARAM_PAGE) 반환")
@@ -65,7 +65,7 @@ class SearchServiceTest {
         for (String exceptionValue : exceptionSet) {
             System.out.println("exceptionValue : " + exceptionValue);
             assertThatThrownBy(() -> searchService.searchBlog(VALID_KEYWORD, VALID_SORT, VALID_SIZE, exceptionValue))
-                    .isInstanceOf(NumberFormatException.class);
+                    .isInstanceOf(ServiceException.class);
         }
     }
 
@@ -97,7 +97,7 @@ class SearchServiceTest {
                 searchService.searchBlog(VALID_KEYWORD, VALID_SORT, VALID_PAGE, exceptionValue);
             } catch (Exception e) {
                 assertThatThrownBy(() -> searchService.searchBlog(VALID_KEYWORD, VALID_SORT, VALID_PAGE, exceptionValue))
-                        .isInstanceOf(NumberFormatException.class);
+                        .isInstanceOf(ServiceException.class);
             }
         }
     }
@@ -148,22 +148,8 @@ class SearchServiceTest {
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getTop10List().size()).isEqualTo(0);
     }
-//    @DisplayName("increment keyword 테스트 (Single-thread")
-//    @DisplayName("increment keyword 테스트 (Multi-thread")
-//    @DisplayName("카카오 장애시 네이버에서 검색 결과")
-//    @DisplayName("카카오, 네이버 장애시 EXTERNAL_SEARCH_REQUEST_FAILED 반환")
 
-    @DisplayName("")
-    @Test
-    public void test() {
-        //given
 
-        //when
-
-        //then
-    }
-
-    @Transactional
     private void createSampleKeyword(int sampleSize) {
         Random random = new Random();
         for (int i = 0; i < sampleSize; i++) {

@@ -31,11 +31,11 @@ public class KakaoSearchHandler extends ExternalSearchHandler {
     private RestTemplateClient restTemplateClient;
 
     @Override
-    public SearchResponse searchBlog(String keyword, String sort, Integer page, Integer size) {
+    public SearchResponse searchBlog(String query, String sort, Integer page, Integer size) {
         log.info("Searching for blog posts with the Kakao Search handler");
 
         Map<String, String> queryParams = Map.of(
-                "query", keyword,
+                "query", query,
                 "sort", sort,
                 "page", String.valueOf(page),
                 "size", String.valueOf(size)
@@ -50,7 +50,7 @@ public class KakaoSearchHandler extends ExternalSearchHandler {
             return new SearchResponse(responseEntity.getBody(), sort, page, size);
         } catch (Exception e) {
             log.warn("The search using the Kakao search handler failed");
-            return nextHandler.searchBlog(keyword, sort, page, size);
+            return nextHandler.searchBlog(query, sort, page, size);
         }
     }
 

@@ -1,48 +1,36 @@
 spring:
   profiles:
-    active: dev
-
+    active: prod
   datasource:
-    #    url: jdbc:h2:mem:testdb # in-memory 주소 설정
-    url: jdbc:h2:tcp://localhost/~/searchserver
+    url: jdbc:h2:mem:testdb # in-memory 주소 설정
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
   jpa:
     hibernate:
-      ddl-auto: create  # app이 실행될 때 모든 테이블을 Drop 후 새로 생성함. 그리고 종료될 때는 데이터가 그대로 남아 있음. 공부할 때만 사용해야함!
+      ddl-auto: create
     properties:
       hibernate:
-        show_sql: false  # sql 결과를 로그에 남긴다. 아래의 logging.level을 이용해서 남기면 파일로 남길 수 있다.
+        show_sql: false
         format_sql: true
 
 client:
   kakao:
     host: https://dapi.kakao.com
-    rest-api-key: KakaoAK 2b6db73c7d647badd87ba0960b2e50c1
-
+    rest-api-key: KakaoAK c25c198ae97858ea1fabe0f4f5909c33
   naver:
     host: https://openapi.naver.com
     client-id: eQTz5HAWuOEQEfUE5pGd
     client-secret: l0QnaYIjHx
 
+api:
+  search:
+    handler:
+      kakao:
+        next-handler: NaverSearchHandler
+      naver:
+        next-handler: FailedToSearchHandler
+
 schedule:
   top10:
-    period: 60000 # millisec
-
-#  data:
-#    web:
-#      pageable:
-#        default-page-size: 20 # 기본 페이지 사이즈
-#        max-page-size: 2000  # 최대 페이지 사이즈
-
-#logging:
-#  file:
-#    path: logs/
-#    name: myapp.log
-#  config: logback-spring.xml
-
-#logging.level:
-#  org.hibernate.SQL: info  # logger를 통해 하이버네이트 실행 SQL을 남긴다. 로그 파일로 남길 수 있다.
-#  org.hibernate.type: trace  # 바인딩 된 파라미터까지 볼 수 있는 옵션
+    period: 10000 # millisec

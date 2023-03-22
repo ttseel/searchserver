@@ -27,8 +27,4 @@ public class Keyword {
         this.keyword = keyword;
         this.readCount = readCount;
     }
-
-    public void increment(int plus) {
-        readCount += plus;
-    }
 }
